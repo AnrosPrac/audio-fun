@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <script src="coi-serviceworker.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EngDraft Quad-Turbo v9</title>
+  <title>EngDraft Dual-Turbo v9</title>
   <style>
     :root { --primary: #00e676; --bg: #050505; --card: #121212; }
     body { font-family: sans-serif; background: var(--bg); color: white; margin: 0; padding: 0; }
@@ -22,28 +22,26 @@
 </head>
 <body>
 
-  <div class="action-bar">ENGDRAFT QUAD-CORE</div>
+  <div class="action-bar">ENGDRAFT DUAL-CORE</div>
 
   <div class="container">
     <div class="status-card">
-      <div id="status">Igniting 4 AI Engines...</div>
+      <div id="status">Igniting 2 AI Engines...</div>
       <div class="progress-container" id="loader-ui">
         <div id="progress-bar"></div>
       </div>
       <div id="stats">Checking hardware threads...</div>
     </div>
 
-    <textarea id="text">This is the quad-core engine test. We are now using four separate background workers to process this lecture. This should provide the absolute maximum speed your hardware can handle.</textarea>
+    <textarea id="text">The future of engineering is built on the power of parallel systems. By using two brains at once, we ensure the lecture never stops. This is the ultimate balance of speed and stability.</textarea>
     
-    <button id="speak" disabled>START QUAD-SPEED LECTURE</button>
+    <button id="speak" disabled>START LECTURE</button>
     <audio id="audio" controls></audio>
   </div>
 
   <script type="module">
-    // CORRECTED: Initialize 4 Workers
+    // STICKING TO 2 WORKERS FOR STABILITY
     const workers = [
-      new Worker('worker.js', { type: 'module' }),
-      new Worker('worker.js', { type: 'module' }),
       new Worker('worker.js', { type: 'module' }),
       new Worker('worker.js', { type: 'module' })
     ];
@@ -68,10 +66,10 @@
       w.onmessage = (e) => {
         if (e.data.type === 'ready') {
           readyCount++;
-          // FIX 1: Update UI to show all 4 are loading
-          statsEl.textContent = `Engines Online: ${readyCount}/4`;
-          if (readyCount === 4) {
-            statusEl.textContent = "QUAD-CORE READY";
+          // FIXED: Matches the 2 workers above
+          statsEl.textContent = `Engines Online: ${readyCount}/2`;
+          if (readyCount === 2) {
+            statusEl.textContent = "SYSTEM READY";
             button.disabled = false;
           }
         }
@@ -93,13 +91,13 @@
         nextIndexToPlay++;
       }
 
-      // THE 30% RULE
+      // 30% RULE
       const threshold = Math.ceil(totalChunks * 0.30);
       if (!isPlaying && (audioQueue.length >= threshold || loadedCount === totalChunks)) {
-        statusEl.textContent = "Buffer Solid. Playing...";
+        statusEl.textContent = "Safety Buffer Ready";
         playNext();
       } else if (!isPlaying) {
-        statusEl.textContent = `Building Wall: ${Math.round((audioQueue.length/threshold)*100)}%`;
+        statusEl.textContent = `Buffering: ${Math.round((audioQueue.length/threshold)*100)}%`;
       }
     }
 
@@ -108,7 +106,7 @@
       isPlaying = true;
       const url = audioQueue.shift();
       audioEl.src = url;
-      audioEl.playbackRate = 0.80; 
+      audioEl.playbackRate = 0.85; // Fixed for massive safety
       await audioEl.play().catch(()=>{});
       audioEl.onended = () => { URL.revokeObjectURL(url); playNext(); };
     }
@@ -126,9 +124,9 @@
       audioQueue = []; pendingSegments.clear(); isPlaying = false;
       loaderUi.style.display = "block";
 
-      // FIX 2: Correctly dispatch to all 4 workers (i % 4)
       chunks.forEach((chunk, i) => {
-        workers[i % 4].postMessage({ type: 'generate', text: chunk, index: i, voice: 'af_bella' });
+        // Distribute between the 2 workers
+        workers[i % 2].postMessage({ type: 'generate', text: chunk, index: i, voice: 'af_bella' });
       });
     };
   </script>
